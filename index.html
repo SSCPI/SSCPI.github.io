@@ -243,10 +243,12 @@
     if(!valEl) return;
     var i=rows.length-1, j=i-monthsBack;
     if(j<0){ valEl.textContent="n/a"; valEl.classList.add("flat"); fromEl.textContent="not enough history"; return; }
-    var now=rows[i].value, prev=rows[j].value, diff=now-prev, mag=Math.abs(diff).toFixed(2);
+    // Round endpoints to 2 decimals first, then difference, so the card reconciles with the shown from/to values.
+    var now=Math.round(rows[i].value*100)/100, prev=Math.round(rows[j].value*100)/100;
+    var diff=Math.round((now-prev)*100)/100, mag=Math.abs(diff).toFixed(2);
     var dir, cls;
-    if(diff>0.005){ dir="Pressure increase"; cls="up"; }
-    else if(diff<-0.005){ dir="Pressure decrease"; cls="down"; }
+    if(diff>0){ dir="Pressure increase"; cls="up"; }
+    else if(diff<0){ dir="Pressure decrease"; cls="down"; }
     else { dir="No change"; cls="flat"; }
     valEl.classList.remove("up","down","flat"); valEl.classList.add(cls);
     valEl.innerHTML = (cls==="flat"?"":"<span>"+mag+"</span>") + "<span class=\"dir\">"+dir+"</span>";
