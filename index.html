@@ -52,7 +52,7 @@
   .chart-card { background:var(--card); border:1px solid var(--paper-line); border-radius:4px; padding:22px 20px 16px; }
   .chart-holder { position:relative; height:420px; }
   @media (max-width:560px){ .chart-holder { height:300px; } }
-  .figcap { font-size:13px; color:var(--muted); margin:12px 2px 0; display:flex; justify-content:space-between; flex-wrap:wrap; gap:6px; }
+  .figcap { font-size:13px; color:var(--muted); margin:12px 2px 0; }
   .figcap .cap-label { font-style:italic; } .status.err { color:var(--pos); }
   section.block { margin-top:46px; }
   h2 { font-family:ui-monospace,monospace; font-size:13px; letter-spacing:0.12em; text-transform:uppercase; color:var(--heading); font-weight:500; margin:0 0 4px; padding-bottom:10px; border-bottom:1px solid var(--paper-line); }
@@ -117,8 +117,7 @@
       <div class="change"><p class="clabel">1-year change</p><p class="cval" id="chg12"></p><p class="cfrom" id="from12"></p></div>
     </div>
     <div class="figcap">
-      <span class="cap-label">Figure 1: Evolution of the SSCPI, 2019&ndash;2026, with change relative to one month, three months, and one year earlier. A decrease indicates easing supply chain pressure; an increase, rising pressure.</span>
-      <span class="status mono" id="status">Loading&hellip;</span>
+      <span class="cap-label">Figure 1: Evolution of the SSCPI, 2019&ndash;2026<span id="obscount"></span>, with change relative to one month, three months, and one year earlier. A decrease indicates easing supply chain pressure; an increase, rising pressure. <span class="status" id="status"></span></span>
     </div>
   </section>
 
@@ -233,7 +232,7 @@
 (function () {
   var CSV_URL="sscpi.csv"; var statusEl=document.getElementById("status");
   fetch(CSV_URL,{cache:"no-store"}).then(function(r){ if(!r.ok) throw new Error("Could not load sscpi.csv (HTTP "+r.status+")"); return r.text(); })
-    .then(function(text){ var rows=parseCSV(text); if(!rows.length) throw new Error("No data rows found in sscpi.csv"); draw(rows); statusEl.textContent=rows.length+" monthly observations"; })
+    .then(function(text){ var rows=parseCSV(text); if(!rows.length) throw new Error("No data rows found in sscpi.csv"); draw(rows); var oc=document.getElementById("obscount"); if(oc) oc.textContent=" ("+rows.length+" monthly observations)"; })
     .catch(function(err){ statusEl.textContent=err.message; statusEl.classList.add("err"); });
   function parseCSV(text){ var lines=text.split(/\r?\n/), out=[]; for(var i=1;i<lines.length;i++){ var line=lines[i].trim(); if(!line) continue; var parts=line.split(","); if(parts.length<2) continue; var val=parseFloat(parts[1]); if(isNaN(val)) continue; out.push({date:parts[0].trim(),value:val}); } return out; }
   function fmtMonth(iso){ var d=new Date(iso+"T00:00:00"); if(isNaN(d)) return iso; return d.toLocaleDateString("en-GB",{month:"short",year:"numeric"}); }
