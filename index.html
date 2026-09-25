@@ -22,6 +22,15 @@
   .authors { font-size:16px; color:var(--muted); margin:0; }
   .authors .inst { display:block; font-size:14px; margin-top:2px; }
   .intro { font-size:18px; margin:26px 0 0; }
+  /* tabs */
+  .tabs { display:flex; gap:4px; margin:28px 0 0; border-bottom:1px solid var(--paper-line); }
+  .tab-btn { appearance:none; background:none; border:none; cursor:pointer;
+    font-family:ui-monospace,monospace; font-size:12px; letter-spacing:0.1em; text-transform:uppercase;
+    color:var(--muted); padding:12px 16px; margin-bottom:-1px; border-bottom:2px solid transparent; }
+  .tab-btn:hover { color:var(--ink); }
+  .tab-btn[aria-selected="true"] { color:var(--ink); border-bottom-color:var(--accent); }
+  .tab-btn:focus-visible { outline:2px solid var(--accent); outline-offset:2px; border-radius:2px; }
+  .tab-panel[hidden] { display:none; }
   .index-feature { margin:40px 0 12px; }
   .reading { display:flex; flex-wrap:wrap; align-items:baseline; gap:8px 18px; margin:0 0 18px; }
   .reading .label { font-family:ui-monospace,monospace; font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); width:100%; margin-bottom:4px; }
@@ -67,9 +76,16 @@
   <header class="masthead">
     <p class="eyebrow">SSCPI</p>
     <h1>Swiss Supply Chain Pressure Index</h1>
-    <p class="authors">Torben Helfrich, Felix H&auml;usle, and Prof. Dr. Stephan Wagner<span class="inst">ETH Z&uuml;rich</span></p>
+    <p class="authors">Torben Helfrich, Felix H&auml;usle, and Prof. Dr. Stephan Wagner<span class="inst">Supply Chain Management Group at ETH Z&uuml;rich</span></p>
     <p class="intro">Global supply chains have proven vulnerable to geopolitical shocks (e.g., shipping disruptions in the Strait of Hormuz during the 2026 Iran war), climate extremes (e.g., drought-related restrictions on Panama Canal traffic), and global health crises (e.g., production shutdowns and transport disruptions during the COVID-19 pandemic). Recent approaches quantify the resulting pressure with global and national indices (Benigno et al., 2022; Friesenbichler et al., 2026). We draw on these methodologies to estimate supply chain pressure in Switzerland from 2019 to the present.</p>
   </header>
+
+  <nav class="tabs" role="tablist" aria-label="Sections">
+    <button class="tab-btn" id="tab-btn-index" role="tab" aria-controls="tab-index" aria-selected="true">Index</button>
+    <button class="tab-btn" id="tab-btn-methodology" role="tab" aria-controls="tab-methodology" aria-selected="false">Data &amp; Methodology</button>
+  </nav>
+
+  <div class="tab-panel" id="tab-index" role="tabpanel" aria-labelledby="tab-btn-index">
 
   <section class="index-feature" aria-label="The index">
     <div class="reading">
@@ -84,7 +100,11 @@
     </div>
   </section>
 
-  <section class="block"><p>Several movements of the SSCPI align with known shocks, supporting the index's construct validity. The sharp spike in spring 2020 reflects the first COVID wave and China's factory shutdowns. The sustained climb afterwards captures additional shutdowns, Ever Given blockage of the Suez Canal in March 2021, and Russia’s invasion of Ukraine in February 2022. Although the war in Ukraine continued, supply chain pressure declined from autumn 2022 onward, likely reflecting gradual adaptation to the wartime environment and the phasing out of COVID-19 disruptions. The years 2024 and 2025 reflect lower supply chain pressure compared to the preceding turbulent period, with the index settling into a stable, slightly-below-average range. In 2026, the index returns above its long-run average for the first time in roughly three years, likely reflecting the 2026 Iran war and associated disruptions to shipping around the Strait of Hormuz.</p></section>
+  <section class="block"><p>The SSCPI is expressed in standard deviations from its long-run average: positive values indicate above-average pressure on Swiss supply chains, negative values below-average. Several movements of the index align with known shocks, supporting its construct validity. The sharp spike in spring 2020 reflects the first COVID wave and China's factory shutdowns. The sustained climb afterwards captures additional shutdowns, Ever Given blockage of the Suez Canal in March 2021, and Russia’s invasion of Ukraine in February 2022. Although the war in Ukraine continued, supply chain pressure declined from autumn 2022 onward, likely reflecting gradual adaptation to the wartime environment and the phasing out of COVID-19 disruptions. The years 2024 and 2025 reflect lower supply chain pressure compared to the preceding turbulent period, with the index settling into a stable, slightly-below-average range. In 2026, the index returns above its long-run average for the first time in roughly three years, likely reflecting the 2026 Iran war and associated disruptions to shipping around the Strait of Hormuz.</p></section>
+
+  </div><!-- /tab-index -->
+
+  <div class="tab-panel" id="tab-methodology" role="tabpanel" aria-labelledby="tab-btn-methodology" hidden>
 
   <section class="block" id="data">
     <h2><span class="num">01</span>Data</h2>
@@ -149,8 +169,36 @@
     <p>U.S. Census Bureau. (2025). X-13ARIMA-SEATS Seasonal Adjustment Program. https://www.census.gov/data/software/x13as.html</p>
   </section>
 
-  <footer><span>Swiss Supply Chain Pressure Index &middot; ETH Z&uuml;rich</span><span id="updated"></span></footer>
+  </div><!-- /tab-methodology -->
+
+  <footer><span>Swiss Supply Chain Pressure Index &middot; Supply Chain Management Group at ETH Z&uuml;rich</span><span id="updated"></span></footer>
 </div>
+<script>
+/* Tab switching with hash deep-linking (#index / #methodology) */
+(function () {
+  var tabs = { "index": { btn:document.getElementById("tab-btn-index"), panel:document.getElementById("tab-index") },
+               "methodology": { btn:document.getElementById("tab-btn-methodology"), panel:document.getElementById("tab-methodology") } };
+  function show(name, updateHash) {
+    if (!tabs[name]) name = "index";
+    Object.keys(tabs).forEach(function(k){
+      var on = (k === name);
+      tabs[k].btn.setAttribute("aria-selected", on ? "true" : "false");
+      tabs[k].panel.hidden = !on;
+    });
+    if (updateHash) {
+      if (history.replaceState) history.replaceState(null, "", "#" + name);
+      else location.hash = name;
+    }
+    window.dispatchEvent(new Event("resize")); // let the chart re-fit when its panel becomes visible
+    window.scrollTo(0, 0);
+  }
+  tabs.index.btn.addEventListener("click", function(){ show("index", true); });
+  tabs.methodology.btn.addEventListener("click", function(){ show("methodology", true); });
+  window.addEventListener("hashchange", function(){ show((location.hash||"").replace("#",""), false); });
+  // initial: honor a hash if present
+  show((location.hash||"").replace("#",""), false);
+})();
+</script>
 <script>
 (function () {
   var CSV_URL="sscpi.csv"; var statusEl=document.getElementById("status");
