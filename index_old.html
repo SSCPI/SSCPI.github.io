@@ -63,19 +63,11 @@
   ol.method .substeps { list-style:none; padding-left:0; margin:12px 0 0; }
   ol.method .substeps li { margin:14px 0; }
   a { color:var(--accent); }
-  .eqrow { display:flex; align-items:center; gap:14px; margin:20px 0; }
-  .eqrow .eq { flex:1 1 auto; min-width:0; overflow-x:auto; overflow-y:hidden; margin:0; }
-  .eqrow .eqnum { flex:none; font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif; font-size:15px; color:var(--ink); }
+  .eq { margin:20px 0; overflow-x:auto; overflow-y:hidden; }
   .eq mjx-container { max-width:100%; font-size:88% !important; }
-  @media (max-width:620px){
-    .eq mjx-container { font-size:74% !important; }
-    /* stack the number on its own line so it never crowds the equation */
-    .eqrow { flex-direction:column; align-items:stretch; gap:4px; }
-    .eqrow .eqnum { align-self:flex-end; font-size:13px; color:var(--muted); }
-    /* a wide equation that still overflows scrolls from the left edge */
-    .eq.eq-wide { text-align:left; }
-    .eq.eq-wide mjx-container[display="true"] { margin:0; text-align:left !important; }
-  }
+  .eq.eq-wide { text-align:left; }
+  .eq.eq-wide mjx-container[display="true"] { margin:0; text-align:left !important; }
+  @media (max-width:620px){ .eq mjx-container { font-size:74% !important; } }
   .eq-note { font-size:13px; color:var(--muted); font-style:italic; margin:6px 0 0; text-align:center; }
   .table-wrap { overflow-x:auto; margin:22px 0 8px; border:1px solid var(--paper-line); border-radius:4px; background:var(--card); }
   table.data { border-collapse:collapse; width:100%; font-size:14px; line-height:1.4; }
@@ -177,8 +169,8 @@
         </ul>
       </li>
       <li>The variables are demand-adjusted to isolate supply-side restrictions and avoid measuring pressure due to demand spikes. Therefore, the SSCPI subcomponents are regressed on current and lagged national data of firms’ new orders. This procedure is shown in Equation (1) for the manager perception variables and in Equation (2) for the transportation cost variables. The resulting residuals are interpreted as the variation not explained by the included demand indicators and are subsequently used in the final index construction.
-        <div class="eqrow"><div class="eq">$$\text{ManagerPerception}_t^{CH} = \beta_0 + \sum_{l=0}^{2} \beta_l^{CH}\, NO_{t-l}^{CH} + \varepsilon_t$$</div><span class="eqnum">(1)</span></div>
-        <div class="eqrow eqrow-wide"><div class="eq eq-wide">$$\text{TransportationCost}_t^{Global} = \beta_0 + \sum_{l=0}^{2} \beta_l^{CH}\, NO_{t-l}^{CH} + \sum_{l=0}^{2} \beta_l^{USA}\, NO_{t-l}^{USA} + \sum_{l=0}^{2} \beta_l^{CHN}\, NO_{t-l}^{CHN} + u_t$$</div><span class="eqnum">(2)</span></div>
+        <div class="eq">$$\text{ManagerPerception}_t^{CH} = \beta_0 + \sum_{l=0}^{2} \beta_l^{CH}\, NO_{t-l}^{CH} + \varepsilon_t \tag{1}$$</div>
+        <div class="eq eq-wide">$$\text{TransportationCost}_t^{Global} = \beta_0 + \sum_{l=0}^{2} \beta_l^{CH}\, NO_{t-l}^{CH} + \sum_{l=0}^{2} \beta_l^{USA}\, NO_{t-l}^{USA} + \sum_{l=0}^{2} \beta_l^{CHN}\, NO_{t-l}^{CHN} + u_t \tag{2}$$</div>
         <p class="eq-note">Note: t=time in months, NO=New Orders</p>
       </li>
       <li>To extract their common underlying trend, the adjusted values are analyzed via principal component analysis (PCA). The first component, which covers the largest proportion of the shared variance, is identified as the Swiss Supply Chain Pressure Index.</li>
