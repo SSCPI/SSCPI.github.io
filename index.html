@@ -271,11 +271,11 @@
     renderChange("chg3","from3", rows, 3);
     renderChange("chg12","from12", rows, 12);
     var ctx=document.getElementById("sscpiChart").getContext("2d");
-    var grad=ctx.createLinearGradient(0,0,0,420); grad.addColorStop(0,"rgba(46,58,69,0.14)"); grad.addColorStop(1,"rgba(46,58,69,0.00)");
+    function makeGradient(chart){ var a=chart.chartArea; if(!a) return "rgba(46,58,69,0.07)"; var g=ctx.createLinearGradient(0,a.top,0,a.bottom); g.addColorStop(0,"rgba(46,58,69,0.14)"); g.addColorStop(1,"rgba(46,58,69,0.00)"); return g; }
     var zeroLine={id:"zeroLine",afterDatasetsDraw:function(chart){ var y=chart.scales.y.getPixelForValue(0); var xa=chart.chartArea,c=chart.ctx; c.save(); c.beginPath(); c.moveTo(xa.left,y); c.lineTo(xa.right,y); c.lineWidth=1; c.strokeStyle="rgba(20,24,29,0.35)"; c.setLineDash([4,4]); c.stroke(); c.restore(); }};
     new Chart(ctx,{ type:"line",
-      data:{ labels:labels, datasets:[{ label:"SSCPI", data:values, borderColor:"#2e3a45", borderWidth:2, fill:true, backgroundColor:grad, pointRadius:0, pointHoverRadius:5, pointHoverBackgroundColor:"#2e3a45", pointHoverBorderColor:"#ffffff", pointHoverBorderWidth:2, tension:0.25 }]},
-      options:{ responsive:true, maintainAspectRatio:false, interaction:{mode:"index",intersect:false},
+      data:{ labels:labels, datasets:[{ label:"SSCPI", data:values, borderColor:"#2e3a45", borderWidth:2, fill:true, backgroundColor:function(c){ return makeGradient(c.chart); }, pointRadius:0, pointHoverRadius:5, pointHoverBackgroundColor:"#2e3a45", pointHoverBorderColor:"#ffffff", pointHoverBorderWidth:2, tension:0.25 }]},
+      options:{ responsive:true, maintainAspectRatio:false, devicePixelRatio:Math.max(2, window.devicePixelRatio||1), interaction:{mode:"index",intersect:false},
         plugins:{ legend:{display:false}, tooltip:{ backgroundColor:"#14181d", titleColor:"#f5f3ee", bodyColor:"#f5f3ee", titleFont:{family:"ui-monospace, monospace",size:11}, bodyFont:{family:"ui-monospace, monospace",size:14,weight:"600"}, padding:10, displayColors:false, callbacks:{ title:function(items){return fmtMonth(items[0].label);}, label:function(item){var v=item.parsed.y; return (v>=0?"+":"")+v.toFixed(2)+" \u03c3";} } } },
         scales:{ x:{ grid:{display:false}, ticks:{ color:"#6b6f76", font:{family:"ui-monospace, monospace",size:11}, maxRotation:0, autoSkip:true, maxTicksLimit:8, callback:function(val){ var iso=this.getLabelForValue(val); var d=new Date(iso+"T00:00:00"); return isNaN(d)?iso:d.getFullYear(); } } }, y:{ grid:{color:"#e9e5db"}, ticks:{ color:"#6b6f76", font:{family:"ui-monospace, monospace",size:11}, callback:function(v){ return (v>0?"+":"")+v; } } } }
       }, plugins:[zeroLine] });
